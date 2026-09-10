@@ -1,9 +1,10 @@
-html_content = """<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Formulário de Cadastro de Colaborador</title>
+    <!-- Biblioteca SheetJS para geração de arquivos Excel (.xlsx) -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <style>
         * {
@@ -192,7 +193,7 @@ html_content = """<!DOCTYPE html>
 <div class="container">
     <div class="header-title">
         <h2>Formulário de Cadastro de Colaborador</h2>
-        <p class="subtitle">Preencha os dados abaixo. Todas as informações serão compiladas na planilha Excel para envio ao Rodrigo Conrado.</p>
+        <p class="subtitle">Preencha os dados abaixo. As informações serão convertidas em um arquivo Excel oficial para envio.</p>
     </div>
 
     <form id="cadastroForm">
@@ -302,11 +303,11 @@ html_content = """<!DOCTYPE html>
         </div>
 
         <div class="info-box">
-            ℹ️ Todos os dados informados acima serão organizados na planilha Excel. Para o WhatsApp, será enviada apenas a mensagem de notificação com o arquivo em anexo.
+            ℹ️ Ao enviar, os dados preenchidos serão consolidados e transformados em um arquivo Excel (.xlsx) baixado automaticamente no seu dispositivo.
         </div>
 
         <button type="submit" class="btn-submit">
-            📊 Gerar Planilha Excel e Enviar para Rodrigo Conrado
+            📊 Gerar Arquivo Excel e Enviar para Rodrigo Conrado
         </button>
     </form>
 </div>
@@ -315,7 +316,7 @@ html_content = """<!DOCTYPE html>
 document.getElementById('cadastroForm').addEventListener('submit', function(e) {
     e.preventDefault();
 
-    // 1. Coleta dos dados do formulário
+    // 1. Coleta e tratamento dos dados do formulário
     const nome = document.getElementById('nome').value.trim();
     const dataNascimentoRaw = document.getElementById('dataNascimento').value;
     const dataNascimento = dataNascimentoRaw ? dataNascimentoRaw.split('-').reverse().join('/') : 'Não informada';
@@ -333,7 +334,6 @@ document.getElementById('cadastroForm').addEventListener('submit', function(e) {
     const tituloEleitor = document.getElementById('tituloEleitor').value.trim() || 'Não informado';
     const reservista = document.getElementById('reservista').value.trim() || 'Não informado';
 
-    // Nomes dos arquivos anexados (se houver)
     const compEscolaridade = document.getElementById('compEscolaridade').files[0] 
         ? document.getElementById('compEscolaridade').files[0].name 
         : 'Não anexado';
@@ -343,7 +343,7 @@ document.getElementById('cadastroForm').addEventListener('submit', function(e) {
 
     const dataCadastro = new Date().toLocaleString('pt-BR');
 
-    // 2. Estruturação dos dados para o Excel
+    // 2. Estruturação dos dados para as abas do Excel
     const fichaVertical = [
         ["FICHA DE CADASTRO DE COLABORADOR", ""],
         ["Data do Registro:", dataCadastro],
@@ -389,7 +389,7 @@ document.getElementById('cadastroForm').addEventListener('submit', function(e) {
         "Data de Cadastro": dataCadastro
     }];
 
-    // 3. Criando o Workbook com as 2 Abas organizadas
+    // 3. Criação efetiva do arquivo binário (Workbook do Excel)
     const workbook = XLSX.utils.book_new();
 
     const wsFicha = XLSX.utils.aoa_to_sheet(fichaVertical);
@@ -399,34 +399,28 @@ document.getElementById('cadastroForm').addEventListener('submit', function(e) {
     const wsTabela = XLSX.utils.json_to_sheet(tabelaHorizontal);
     XLSX.utils.book_append_sheet(workbook, wsTabela, "Tabela de Cadastro");
 
-    // 4. Salvar arquivo Excel no dispositivo
+    // 4. Disparo do Download automático do arquivo gerado
     const nomeLimpo = nome.replace(/[^a-zA-Z0-9]/g, '_');
     const nomeArquivo = `Cadastro_${nomeLimpo}.xlsx`;
     XLSX.writeFile(workbook, nomeArquivo);
 
-    // 5. Configuração do envio para o WhatsApp de Rodrigo Conrado
+    // 5. Configuração e redirecionamento para o WhatsApp
     const numeroWhatsAppRodrigo = "5517996195795"; 
-
     const mensagemWhatsApp = encodeURIComponent(
-        `Olá Rodrigo Conrado Serafim!\\n\\n` +
-        `📌 *Novo Cadastro Realizado*\\n\\n` +
-        `👤 *Colaborador:* ${nome}\\n` +
-        `📄 *CPF:* ${cpf}\\n` +
-        `📱 *Contato:* ${telefone}\\n\\n` +
-        `📎 *Todos os dados completos foram consolidados no arquivo Excel:* "${nomeArquivo}".\\n\\n` +
-        `*Estou enviando a planilha em anexo nesta conversa.*`
+        `Olá Rodrigo Conrado Serafim!\n\n` +
+        `📌 *Novo Cadastro Realizado*\n\n` +
+        `👤 *Colaborador:* ${nome}\n` +
+        `📄 *CPF:* ${cpf}\n` +
+        `📱 *Contato:* ${telefone}\n\n` +
+        `📎 *O arquivo Excel completo ("${nomeArquivo}") foi gerado e baixado no meu dispositivo.*`
     );
 
-    alert(`✅ A planilha Excel "${nomeArquivo}" contendo TODOS os dados foi salva no seu dispositivo.\\n\\nVocê será redirecionado para a conversa no WhatsApp com Rodrigo Conrado. Anexe o arquivo baixado na conversa!`);
+    alert(`✅ O arquivo Excel "${nomeArquivo}" foi gerado e baixado com sucesso!\n\nVocê será redirecionado para o WhatsApp.`);
 
     const urlWhatsApp = `https://api.whatsapp.com/send?phone=${numeroWhatsAppRodrigo}&text=${mensagemWhatsApp}`;
     window.open(urlWhatsApp, '_blank');
 });
 </script>
 
-</body>            
+</body>
 </html>
-"""
-
-with open("formulario_colaborador.html", "w", encoding="utf-8") as f:
-    f.write(html_content)

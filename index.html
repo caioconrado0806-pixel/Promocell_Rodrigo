@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulário de Cadastro de Colaborador</title>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+        }
+
+        body {
+            background-color: #f1f5f9;
+            padding: 30px 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #334155;''
+        }
+
+        .container {
+            background-color: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+            padding: 35px;
+            width: 100%;
+            max-width: 850px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .header-title {
+            text-align: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f1f5f9;
+        }
+
+        h2 {
+            color: #0f172a;
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        p.subtitle {
+            color: #64748b;
+            font-size: 0.92rem;
+        }
+
+        .section-header {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin: 20px 0 12px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-header::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 16px;
+            background-color: #25d366;
+            border-radius: 2px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .full-width {
+            grid-column: span 2;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #475569;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="date"],
+        select {
+            padding: 11px 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            outline: none;
+            background-color: #f8fafc;
+            transition: all 0.2s ease;
+            color: #0f172a;
+        }
+
+        input:focus, select:focus {
+            border-color: #25d366;
+            background-color: #ffffff;
+            box-shadow: 0 0 0 3px rgba(37, 211, 102, 0.15);
+        }
+
+        .file-input-wrapper {
+            background-color: #f8fafc;
+            padding: 10px;
+            border: 1px dashed #cbd5e1;
+            border-radius: 8px;
+            transition: border-color 0.2s;
+        }
+
+        .file-input-wrapper:hover {
+            border-color: #25d366;
+        }
+
+        input[type="file"] {
+            width: 100%;
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+
+        .info-box {
+            background-color: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-top: 25px;
+            font-size: 0.88rem;
+            color: #166534;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-submit {
+            background-color: #25d366;
+            color: white;
+            font-weight: 700;
+            font-size: 1rem;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            transition: background-color 0.2s, transform 0.1s;
+            box-shadow: 0 4px 12px rgba(37, 211, 102, 0.25);
+        }
+
+        .btn-submit:hover {
+            background-color: #20bd5a;
+        }
+
+        .btn-submit:active {
+            transform: scale(0.99);
+        }
+
+        @media (max-width: 640px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            .full-width {
+                grid-column: span 1;
+            }
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header-title">
+        <h2>Formulário de Cadastro de Colaborador</h2>
+        <p class="subtitle">Preencha os dados abaixo. Todas as informações serão compiladas na planilha Excel para envio ao Rodrigo Conrado.</p>
+    </div>
+
+    <form id="cadastroForm">
+        <div class="section-header">Dados Pessoais</div>
+        <div class="form-grid">
+            <div class="form-group full-width">
+                <label for="nome">Nome Completo *</label>
+                <input type="text" id="nome" required placeholder="Digite seu nome completo">
+            </div>
+
+            <div class="form-group">
+                <label for="dataNascimento">Data de Nascimento *</label>
+                <input type="date" id="dataNascimento" required>
+            </div>
+
+            <div class="form-group">
+                <label for="maiorIdade">É maior de idade? *</label>
+                <select id="maiorIdade" required>
+                    <option value="">Selecione...</option>
+                    <option value="Sim">Sim</option>
+                    <option value="Não">Não</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="section-header">Contato & Endereço</div>
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="email">E-mail *</label>
+                <input type="email" id="email" required placeholder="seu@email.com">
+            </div>
+
+            <div class="form-group">
+                <label for="telefone">Telefone Principal *</label>
+                <input type="tel" id="telefone" required placeholder="(00) 00000-0000">
+            </div>
+
+            <div class="form-group">
+                <label for="telefoneSec">Telefone Secundário</label>
+                <input type="tel" id="telefoneSec" placeholder="(00) 00000-0000">
+            </div>
+
+            <div class="form-group">
+                <label for="cep">CEP *</label>
+                <input type="text" id="cep" required placeholder="00000-000">
+            </div>
+
+            <div class="form-group full-width">
+                <label for="endereco">Endereço Completo *</label>
+                <input type="text" id="endereco" required placeholder="Rua, Número, Bairro, Cidade - UF">
+            </div>
+        </div>
+
+        <div class="section-header">Documentação</div>
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="cpf">CPF *</label>
+                <input type="text" id="cpf" required placeholder="000.000.000-00">
+            </div>
+
+            <div class="form-group">
+                <label for="rg">RG *</label>
+                <input type="text" id="rg" required placeholder="00.000.000-0">
+            </div>
+
+            <div class="form-group">
+                <label for="cnpj">CNPJ</label>
+                <input type="text" id="cnpj" placeholder="00.000.000/0000-00 (Opcional)">
+            </div>
+
+            <div class="form-group">
+                <label for="cnh">CNH</label>
+                <input type="text" id="cnh" placeholder="Número da CNH (se houver)">
+            </div>
+
+            <div class="form-group">
+                <label for="tituloEleitor">Título de Eleitor</label>
+                <input type="text" id="tituloEleitor" placeholder="Número do título">
+            </div>
+
+            <div class="form-group">
+                <label for="reservista">Certificado de Reservista</label>
+                <input type="text" id="reservista" placeholder="Número (se aplicável)">
+            </div>
+        </div>
+
+        <div class="section-header">Dados Bancários & Anexos</div>
+        <div class="form-grid">
+            <div class="form-group full-width">
+                <label for="pix">Chave PIX (Para recebimento de salário) *</label>
+                <input type="text" id="pix" required placeholder="CPF, e-mail, telefone ou chave aleatória">
+            </div>
+
+            <div class="form-group full-width">
+                <label for="compEscolaridade">Comprovante de Escolaridade</label>
+                <div class="file-input-wrapper">
+                    <input type="file" id="compEscolaridade" accept=".pdf,.png,.jpg,.jpeg">
+                </div>
+            </div>
+
+            <div class="form-group full-width">
+                <label for="compResidencia">Comprovante de Residência</label>
+                <div class="file-input-wrapper">
+                    <input type="file" id="compResidencia" accept=".pdf,.png,.jpg,.jpeg">
+                </div>
+            </div>
+        </div>
+
+        <div class="info-box">
+            ℹ️ Todos os dados informados acima serão organizados na planilha Excel. Para o WhatsApp, será enviada apenas a mensagem de notificação com o arquivo em anexo.
+        </div>
+
+        <button type="submit" class="btn-submit">
+            📊 Gerar Planilha Excel e Enviar para Rodrigo Conrado
+        </button>
+    </form>
+</div>
+
+<script>
+document.getElementById('cadastroForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    // 1. Coleta dos dados do formulário
+    const nome = document.getElementById('nome').value.trim();
+    const dataNascimentoRaw = document.getElementById('dataNascimento').value;
+    const dataNascimento = dataNascimentoRaw ? dataNascimentoRaw.split('-').reverse().join('/') : 'Não informada';
+    const maiorIdade = document.getElementById('maiorIdade').value;
+    const email = document.getElementById('email').value.trim();
+    const telefone = document.getElementById('telefone').value.trim();
+    const telefoneSec = document.getElementById('telefoneSec').value.trim() || 'Não informado';
+    const endereco = document.getElementById('endereco').value.trim();
+    const cep = document.getElementById('cep').value.trim();
+    const cpf = document.getElementById('cpf').value.trim();
+    const rg = document.getElementById('rg').value.trim();
+    const cnpj = document.getElementById('cnpj').value.trim() || 'Não informado';
+    const cnh = document.getElementById('cnh').value.trim() || 'Não possui';
+    const pix = document.getElementById('pix').value.trim();
+    const tituloEleitor = document.getElementById('tituloEleitor').value.trim() || 'Não informado';
+    const reservista = document.getElementById('reservista').value.trim() || 'Não informado';
+
+    // Nomes dos arquivos anexados (se houver)
+    const compEscolaridade = document.getElementById('compEscolaridade').files[0] 
+        ? document.getElementById('compEscolaridade').files[0].name 
+        : 'Não anexado';
+    const compResidencia = document.getElementById('compResidencia').files[0] 
+        ? document.getElementById('compResidencia').files[0].name 
+        : 'Não anexado';
+
+    const dataCadastro = new Date().toLocaleString('pt-BR');
+
+    // 2. Estruturação dos dados para o Excel
+    // Aba 1: Ficha em formato vertical (Ficha do Colaborador)
+    const fichaVertical = [
+        ["FICHA DE CADASTRO DE COLABORADOR", ""],
+        ["Data do Registro:", dataCadastro],
+        ["", ""],
+        ["CAMPO / ITEM", "INFORMAÇÃO DECLARADA"],
+        ["Nome Completo", nome],
+        ["Data de Nascimento", dataNascimento],
+        ["Maior de Idade", maiorIdade],
+        ["E-mail", email],
+        ["Telefone Principal", telefone],
+        ["Telefone Secundário", telefoneSec],
+        ["Endereço Completo", endereco],
+        ["CEP", cep],
+        ["CPF", cpf],
+        ["RG", rg],
+        ["CNPJ", cnpj],
+        ["CNH", cnh],
+        ["Chave PIX (Salário)", pix],
+        ["Título de Eleitor", tituloEleitor],
+        ["Certificado de Reservista", reservista],
+        ["Anexo: Comprovante Escolaridade", compEscolaridade],
+        ["Anexo: Comprovante Residência", compResidencia]
+    ];
+
+    // Aba 2: Tabela com 1 linha de dados (Ideal para consolidação/banco de dados)
+    const tabelaHorizontal = [{
+        "Nome Completo": nome,
+        "Data de Nascimento": dataNascimento,
+        "Maior de Idade": maiorIdade,
+        "E-mail": email,
+        "Telefone Principal": telefone,
+        "Telefone Secundário": telefoneSec,
+        "Endereço": endereco,
+        "CEP": cep,
+        "CPF": cpf,
+        "RG": rg,
+        "CNPJ": cnpj,
+        "CNH": cnh,
+        "Chave PIX": pix,
+        "Título Eleitor": tituloEleitor,
+        "Reservista": reservista,
+        "Anexo Escolaridade": compEscolaridade,
+        "Anexo Residência": compResidencia,
+        "Data de Cadastro": dataCadastro
+    }];
+
+    // 3. Criando o Workbook com as 2 Abas organizadas
+    const workbook = XLSX.utils.book_new();
+
+    // Criar Aba 1
+    const wsFicha = XLSX.utils.aoa_to_sheet(fichaVertical);
+    wsFicha['!cols'] = [{ wch: 30 }, { wch: 55 }];
+    XLSX.utils.book_append_sheet(workbook, wsFicha, "Ficha do Colaborador");
+
+    // Criar Aba 2
+    const wsTabela = XLSX.utils.json_to_sheet(tabelaHorizontal);
+    XLSX.utils.book_append_sheet(workbook, wsTabela, "Tabela de Cadastro");
+
+    // 4. Salvar arquivo Excel no dispositivo
+    const nomeLimpo = nome.replace(/[^a-zA-Z0-9]/g, '_');
+    const nomeArquivo = `Cadastro_${nomeLimpo}.xlsx`;
+    XLSX.writeFile(workbook, nomeArquivo);
+
+    // 5. Configuração do envio para o WhatsApp de Rodrigo Conrado
+    const numeroWhatsAppRodrigo = "5517996195795"; 
+
+    // Mensagem enxuta e objetiva (todos os dados detalhados estão na planilha)
+    const mensagemWhatsApp = encodeURIComponent(
+        `Olá Rodrigo Conrado Serafim!\n\n` +
+        `📌 *Novo Cadastro Realizado*\n\n` +
+        `👤 *Colaborador:* ${nome}\n` +
+        `📄 *CPF:* ${cpf}\n` +
+        `📱 *Contato:* ${telefone}\n\n` +
+        `📎 *Todos os dados completos foram consolidados no arquivo Excel:* "${nomeArquivo}".\n\n` +
+        `*Estou enviando a planilha em anexo nesta conversa.*`
+    );
+
+    // Orientação visual ao usuário
+    alert(`✅ A planilha Excel "${nomeArquivo}" contendo TODOS os dados foi salva no seu dispositivo.\n\nVocê será redirecionado para a conversa no WhatsApp com Rodrigo Conrado. Anexe o arquivo baixado na conversa!`);
+
+    // Redireciona para o WhatsApp
+    const urlWhatsApp = `https://api.whatsapp.com/send?phone=${numeroWhatsAppRodrigo}&text=${mensagemWhatsApp}`;
+    window.open(urlWhatsApp, '_blank');
+});
+</script>
+
+</body>             
+</html>

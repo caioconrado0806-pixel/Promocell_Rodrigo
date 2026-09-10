@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+html_content = """<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -344,7 +344,6 @@ document.getElementById('cadastroForm').addEventListener('submit', function(e) {
     const dataCadastro = new Date().toLocaleString('pt-BR');
 
     // 2. Estruturação dos dados para o Excel
-    // Aba 1: Ficha em formato vertical (Ficha do Colaborador)
     const fichaVertical = [
         ["FICHA DE CADASTRO DE COLABORADOR", ""],
         ["Data do Registro:", dataCadastro],
@@ -369,7 +368,6 @@ document.getElementById('cadastroForm').addEventListener('submit', function(e) {
         ["Anexo: Comprovante Residência", compResidencia]
     ];
 
-    // Aba 2: Tabela com 1 linha de dados (Ideal para consolidação/banco de dados)
     const tabelaHorizontal = [{
         "Nome Completo": nome,
         "Data de Nascimento": dataNascimento,
@@ -394,12 +392,10 @@ document.getElementById('cadastroForm').addEventListener('submit', function(e) {
     // 3. Criando o Workbook com as 2 Abas organizadas
     const workbook = XLSX.utils.book_new();
 
-    // Criar Aba 1
     const wsFicha = XLSX.utils.aoa_to_sheet(fichaVertical);
     wsFicha['!cols'] = [{ wch: 30 }, { wch: 55 }];
     XLSX.utils.book_append_sheet(workbook, wsFicha, "Ficha do Colaborador");
 
-    // Criar Aba 2
     const wsTabela = XLSX.utils.json_to_sheet(tabelaHorizontal);
     XLSX.utils.book_append_sheet(workbook, wsTabela, "Tabela de Cadastro");
 
@@ -411,25 +407,26 @@ document.getElementById('cadastroForm').addEventListener('submit', function(e) {
     // 5. Configuração do envio para o WhatsApp de Rodrigo Conrado
     const numeroWhatsAppRodrigo = "5517996195795"; 
 
-    // Mensagem enxuta e objetiva (todos os dados detalhados estão na planilha)
     const mensagemWhatsApp = encodeURIComponent(
-        `Olá Rodrigo Conrado Serafim!\n\n` +
-        `📌 *Novo Cadastro Realizado*\n\n` +
-        `👤 *Colaborador:* ${nome}\n` +
-        `📄 *CPF:* ${cpf}\n` +
-        `📱 *Contato:* ${telefone}\n\n` +
-        `📎 *Todos os dados completos foram consolidados no arquivo Excel:* "${nomeArquivo}".\n\n` +
+        `Olá Rodrigo Conrado Serafim!\\n\\n` +
+        `📌 *Novo Cadastro Realizado*\\n\\n` +
+        `👤 *Colaborador:* ${nome}\\n` +
+        `📄 *CPF:* ${cpf}\\n` +
+        `📱 *Contato:* ${telefone}\\n\\n` +
+        `📎 *Todos os dados completos foram consolidados no arquivo Excel:* "${nomeArquivo}".\\n\\n` +
         `*Estou enviando a planilha em anexo nesta conversa.*`
     );
 
-    // Orientação visual ao usuário
-    alert(`✅ A planilha Excel "${nomeArquivo}" contendo TODOS os dados foi salva no seu dispositivo.\n\nVocê será redirecionado para a conversa no WhatsApp com Rodrigo Conrado. Anexe o arquivo baixado na conversa!`);
+    alert(`✅ A planilha Excel "${nomeArquivo}" contendo TODOS os dados foi salva no seu dispositivo.\\n\\nVocê será redirecionado para a conversa no WhatsApp com Rodrigo Conrado. Anexe o arquivo baixado na conversa!`);
 
-    // Redireciona para o WhatsApp
     const urlWhatsApp = `https://api.whatsapp.com/send?phone=${numeroWhatsAppRodrigo}&text=${mensagemWhatsApp}`;
     window.open(urlWhatsApp, '_blank');
 });
 </script>
 
-</body>             
+</body>            
 </html>
+"""
+
+with open("formulario_colaborador.html", "w", encoding="utf-8") as f:
+    f.write(html_content)
